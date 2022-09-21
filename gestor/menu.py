@@ -1,8 +1,9 @@
 import os
+import helpers
 
 def iniciar():
     while True:
-        os.system('clear') # cls en Windows
+        helpers.limpiar_pantalla()
         print("========================")
         print(" BIENVENIDO AL Manager ")
         print("========================")
