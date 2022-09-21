@@ -16,7 +16,43 @@ class CenterWidgetMixin:
         y = int((hs/2) - (h/2))
         self.geometry(f"{w}x{h}+{x}+{y}")
 
-
+class CreateClientWindow(Toplevel, CenterWidgetMixin):
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.title('Crear cliente')
+        self.build()
+        self.center()
+        # Obligar al usuario a interactuar con la subventana
+        self.transient(parent)
+        self.grab_set()
+    def build(self):
+        # Top frame
+        frame = Frame(self)
+        frame.pack(padx=20, pady=10)
+        # Labels
+        Label(frame, text="DNI (2 ints y 1 upper char)").grid(row=0, column=0) column=0)
+        Label(frame, text="Nombre (2 a 30 char)").grid(row=0, column=1)
+        Label(frame, text="Apellido (2 a 30 char)").grid(row=0, column=2)
+        # Entries
+        dni = Entry(frame)
+        dni.grid(row=1, column=0)
+        nombre = Entry(frame)
+        nombre.grid(row=1, column=1)
+        apellido = Entry(frame)
+        apellido.grid(row=1, column=2)
+        # Bottom frame
+        frame = Frame(self)
+        frame.pack(pady=10)
+        # Buttons
+        crear = Button(frame, text="Crear",command=self.create_client)
+        crear.configure(state=DISABLED)
+        crear.grid(row=0, column=0)
+        Button(frame, text="Cancelar", command=self.close).grid(row=0,column=1)
+    def create_client(self):
+        pass
+    def close(self):
+        self.destroy()
+        self.update()
 class MainWindow(Tk, CenterWidgetMixin):
     def __init__(self):
         super().__init__()
@@ -60,7 +96,7 @@ class MainWindow(Tk, CenterWidgetMixin):
         Button(frame, text="Crear", command=None).grid(row=1, column=0)
         Button(frame, text="Modificar", command=None).grid(row=1, column=1)
         Button(frame, text="Borrar", command=self.delete).grid(row=1, column=2)
-
+        Button(frame, text="Crear", command=self.create_client_window).grid(row=1, column=0)
 
         # Pack
         treeview.pack()
@@ -77,8 +113,8 @@ class MainWindow(Tk, CenterWidgetMixin):
             self.treeview.delete(cliente)
 
 
-    def hola(self):
-        print("¡Hola mundo!")
+    def create_client_window(self):
+        CreateClientWindow(self)
 
 
 
