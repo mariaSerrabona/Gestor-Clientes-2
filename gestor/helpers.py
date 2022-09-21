@@ -1,8 +1,7 @@
 import os
 import platform
 def limpiar_pantalla():
-    os.system('cls') if platform.system() == "Windows" else
-    os.system('clear')
+    os.system('cls') if platform.system() == "Windows" else os.system('clear')
 
 
 def leer_texto(longitud_min=0, longitud_max=100, mensaje=None):

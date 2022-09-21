@@ -1,5 +1,7 @@
 import os
 import helpers
+import database as db
+
 
 def iniciar():
     while True:
@@ -51,9 +53,9 @@ def iniciar():
                 print("Cliente no encontrado.")
         if opcion == '5':
             print("Borrando un cliente...\n")
-            dni = helpers.leer_texto(3, 3, "DNI (2 ints y 1 char)").upper()
-            print("Cliente borrado correctamente.")
-            if db.Clientes.borrar(dni) else print("Cliente no encontrado.")
+            dni = helpers.leer_texto(3, 3, "DNI (2 int y 1 char)").upper()
+            print("Cliente borrado correctamente.") if db.Clientes.borrar(
+                dni) else print("Cliente no encontrado.")
         if opcion == '6':
             print("Saliendo...\n")
             break

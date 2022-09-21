@@ -112,12 +112,14 @@ class EditClientWindow(Toplevel, CenterWidgetMixin):
         dni.grid(row=1, column=0)
         nombre = Entry(frame)
         nombre.grid(row=1, column=1)
-        nombre.bind("<KeyRelease>", lambda ev: self.validate(ev, 0)) apellido = Entry(frame)
+        nombre.bind("<KeyRelease>", lambda ev: self.validate(ev, 0))
+        apellido = Entry(frame)
         apellido.grid(row=1, column=2)
         apellido.bind("<KeyRelease>", lambda ev: self.validate(ev, 1))
                 # Set entries initial values
         cliente = self.master.treeview.focus()
-        campos = self.master.treeview.item(cliente, 'values') dni.insert(0, campos[0])
+        campos = self.master.treeview.item(cliente, 'values')
+        dni.insert(0, campos[0])
         dni.config(state=DISABLED)
         nombre.insert(0, campos[1])
         apellido.insert(0, campos[2])
@@ -148,7 +150,7 @@ class EditClientWindow(Toplevel, CenterWidgetMixin):
         cliente = self.master.treeview.focus()
         # Sobreescribimos los datos de la fila seleccionada
         self.master.treeview.item(cliente, values=(self.dni.get(), self.nombre.get(), self.apellido.get()))
-        db.Clientes.modificar(self.dni.get(), self.nombre.get(),
+        db.Clientes.modificar(self.dni.get(), self.nombre.get())
         self.close()
 
     def close(self):
