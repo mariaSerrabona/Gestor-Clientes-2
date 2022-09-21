@@ -66,9 +66,12 @@ class CreateClientWindow(Toplevel, CenterWidgetMixin):
 
     def create_client(self):
         self.master.treeview.insert(
-        parent='', index='end', iid=self.dni.get(), values=(self.dni.get(), self.nombre.get(),
+            parent='', index='end', iid=self.dni.get(), values=(self.dni.get(), self.nombre.get(),
         self.apellido.get()))
+        db.Clientes.crear(self.dni.get(), self.nombre.get(),
+        self.apellido.get())
         self.close()
+
     def close(self):
         self.destroy()
         self.update()
@@ -143,8 +146,9 @@ class EditClientWindow(Toplevel, CenterWidgetMixin):
 
     def update_client(self):
         cliente = self.master.treeview.focus()
-        # Sobreescribimos los datos de la fila seleccionada self.master.treeview.item(
-        cliente, values=(self.dni.get(), self.nombre.get(), self.apellido.get()))
+        # Sobreescribimos los datos de la fila seleccionada
+        self.master.treeview.item(cliente, values=(self.dni.get(), self.nombre.get(), self.apellido.get()))
+        db.Clientes.modificar(self.dni.get(), self.nombre.get(),
         self.close()
 
     def close(self):
@@ -207,6 +211,7 @@ class MainWindow(Tk, CenterWidgetMixin):
         if confirmar:
             # remove the row
             self.treeview.delete(cliente)
+            db.Clientes.borrar(campos[0])
 
 
 
