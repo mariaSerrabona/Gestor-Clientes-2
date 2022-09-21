@@ -30,7 +30,7 @@ class CreateClientWindow(Toplevel, CenterWidgetMixin):
         frame = Frame(self)
         frame.pack(padx=20, pady=10)
         # Labels
-        Label(frame, text="DNI (2 ints y 1 upper char)").grid(row=0, column=0) column=0)
+        Label(frame, text="DNI (2 ints y 1 upper char)").grid(row=0, column=0)
         Label(frame, text="Nombre (2 a 30 char)").grid(row=0, column=1)
         Label(frame, text="Apellido (2 a 30 char)").grid(row=0, column=2)
         # Entries
@@ -48,11 +48,15 @@ class CreateClientWindow(Toplevel, CenterWidgetMixin):
         crear.configure(state=DISABLED)
         crear.grid(row=0, column=0)
         Button(frame, text="Cancelar", command=self.close).grid(row=0,column=1)
+
+
     def create_client(self):
         pass
     def close(self):
         self.destroy()
         self.update()
+
+
 class MainWindow(Tk, CenterWidgetMixin):
     def __init__(self):
         super().__init__()
@@ -83,23 +87,20 @@ class MainWindow(Tk, CenterWidgetMixin):
         treeview.heading("DNI", text="DNI", anchor=CENTER)
         treeview.heading("Nombre", text="Nombre", anchor=CENTER)
         treeview.heading("Apellido", text="Apellido", anchor=CENTER)
+        # Pack
+        treeview.pack()
+
 
         for cliente in db.Clientes.lista:
             treeview.insert(parent='', index='end', iid=cliente.dni, values=(cliente.dni, cliente.nombre, cliente.apellido))
 
-
-
-        # Bottom Frame
         frame = Frame(self)
         frame.pack(pady=20)
         # Buttons
-        Button(frame, text="Crear", command=None).grid(row=1, column=0)
         Button(frame, text="Modificar", command=None).grid(row=1, column=1)
         Button(frame, text="Borrar", command=self.delete).grid(row=1, column=2)
         Button(frame, text="Crear", command=self.create_client_window).grid(row=1, column=0)
 
-        # Pack
-        treeview.pack()
 
     def delete(self):
         cliente = self.treeview.focus()
@@ -111,6 +112,7 @@ class MainWindow(Tk, CenterWidgetMixin):
         if confirmar:
             # remove the row
             self.treeview.delete(cliente)
+
 
 
     def create_client_window(self):
