@@ -34,12 +34,16 @@ class CreateClientWindow(Toplevel, CenterWidgetMixin):
         Label(frame, text="Nombre (2 a 30 char)").grid(row=0, column=1)
         Label(frame, text="Apellido (2 a 30 char)").grid(row=0, column=2)
         # Entries
+        # Entries and validations
         dni = Entry(frame)
         dni.grid(row=1, column=0)
+        dni.bind("<KeyRelease>", lambda ev: self.validate(ev, 0))
         nombre = Entry(frame)
         nombre.grid(row=1, column=1)
+        nombre.bind("<KeyRelease>", lambda ev: self.validate(ev, 1))
         apellido = Entry(frame)
         apellido.grid(row=1, column=2)
+        apellido.bind("<KeyRelease>", lambda ev: self.validate(ev, 2))
         # Bottom frame
         frame = Frame(self)
         frame.pack(pady=10)
@@ -55,6 +59,13 @@ class CreateClientWindow(Toplevel, CenterWidgetMixin):
     def close(self):
         self.destroy()
         self.update()
+
+
+    def validate(self, event, index):
+        valor = event.widget.get()
+        # Validar como dni si es el primer campo o textual para los otrosdos
+        valido = helpers.dni_valido(valor, db.Clientes.lista) if index == 0\
+            else (valor.isalpha() and len(valor) >= 2 and len(valor) <= event.widget.configure({"bg": "Green" if valido else "Red"})
 
 
 class MainWindow(Tk, CenterWidgetMixin):
