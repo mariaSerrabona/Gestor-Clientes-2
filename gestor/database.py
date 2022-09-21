@@ -9,6 +9,12 @@ class Cliente:
 class Clientes:
     # Lista de clientes
     lista = []
+    with open("clientes.csv", newline="\n") as fichero:
+        reader = csv.reader(fichero, delimiter=";")
+        for dni, nombre, apellido in reader:
+            cliente = Cliente(dni, nombre, apellido)
+            lista.append(cliente)
+
     @staticmethod
     def buscar(dni):
         for cliente in Clientes.lista:
