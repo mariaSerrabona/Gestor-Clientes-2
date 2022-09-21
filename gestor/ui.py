@@ -27,14 +27,17 @@ class CreateClientWindow(Toplevel, CenterWidgetMixin):
         self.transient(parent)
         self.grab_set()
 
+
     def build(self):
         # Top frame
         frame = Frame(self)
         frame.pack(padx=20, pady=10)
+
         # Labels
         Label(frame, text="DNI (2 ints y 1 upper char)").grid(row=0, column=0)
         Label(frame, text="Nombre (2 a 30 char)").grid(row=0, column=1)
         Label(frame, text="Apellido (2 a 30 char)").grid(row=0, column=2)
+
         # Entries
         # Entries and validations
         dni = Entry(frame)
@@ -46,9 +49,11 @@ class CreateClientWindow(Toplevel, CenterWidgetMixin):
         apellido = Entry(frame)
         apellido.grid(row=1, column=2)
         apellido.bind("<KeyRelease>", lambda event: self.validate(event, 2))
+
         # Bottom frame
         frame = Frame(self)
         frame.pack(pady=10)
+
         # Buttons
         crear = Button(frame, text="Crear",command=self.create_client)
         crear.configure(state=DISABLED)
@@ -68,8 +73,7 @@ class CreateClientWindow(Toplevel, CenterWidgetMixin):
         self.master.treeview.insert(
             parent='', index='end', iid=self.dni.get(), values=(self.dni.get(), self.nombre.get(),
         self.apellido.get()))
-        db.Clientes.crear(self.dni.get(), self.nombre.get(),
-        self.apellido.get())
+        db.Clientes.crear(self.dni.get(), self.nombre.get(),self.apellido.get())
         self.close()
 
     def close(self):
@@ -83,7 +87,8 @@ class CreateClientWindow(Toplevel, CenterWidgetMixin):
         valido = helpers.dni_valido(valor, db.Clientes.lista) if index == 0\
             else (valor.isalpha() and len(valor) >= 2 and len(valor) <=30)
         event.widget.configure({"bg": "Green" if valido else "Red"})
-        # Cambiar estado del botón en base a las validaciones self.validaciones[index] = valido
+        # Cambiar estado del botón en base a las validaciones
+        self.validaciones[index] = valido
         self.crear.config(state=NORMAL if self.validaciones == [1, 1, 1]
                                 else DISABLED)
 
@@ -94,6 +99,7 @@ class EditClientWindow(Toplevel, CenterWidgetMixin):
         self.title('Actualizar cliente')
         self.build()
         self.center()
+        self.transient(parent)
         # Obligar al usuario a interactuar con la subventana self.transient(parent)
         self.grab_set()
 
@@ -112,12 +118,12 @@ class EditClientWindow(Toplevel, CenterWidgetMixin):
         dni.grid(row=1, column=0)
         nombre = Entry(frame)
         nombre.grid(row=1, column=1)
-        nombre.bind("<KeyRelease>", lambda ev: self.validate(ev, 0))
+        nombre.bind("<KeyRelease>", lambda event: self.validate(event, 0))
         apellido = Entry(frame)
         apellido.grid(row=1, column=2)
-        apellido.bind("<KeyRelease>", lambda ev: self.validate(ev, 1))
+        apellido.bind("<KeyRelease>", lambda event: self.validate(event, 1))
 
-                # Set entries initial values
+        # Set entries initial values
         cliente = self.master.treeview.focus()
         campos = self.master.treeview.item(cliente, 'values')
         dni.insert(0, campos[0])
@@ -128,6 +134,8 @@ class EditClientWindow(Toplevel, CenterWidgetMixin):
         # Bottom frame
         frame = Frame(self)
         frame.pack(pady=10)
+        treeview = ttk.Treeview(frame)
+        treeview['columns'] = ('DNI', 'Nombre', 'Apellido')
 
         # Buttons
         actualizar = Button(frame, text="Actualizar", command=self.update_client)
@@ -141,6 +149,7 @@ class EditClientWindow(Toplevel, CenterWidgetMixin):
         self.dni = dni
         self.nombre = nombre
         self.apellido = apellido
+        self.treeview = treeview
 
     def validate(self, event, index):
         valor = event.widget.get()
@@ -154,7 +163,7 @@ class EditClientWindow(Toplevel, CenterWidgetMixin):
         cliente = self.master.treeview.focus()
         # Sobreescribimos los datos de la fila seleccionada
         self.master.treeview.item(cliente, values=(self.dni.get(), self.nombre.get(), self.apellido.get()))
-        db.Clientes.modificar(self.dni.get(), self.nombre.get())
+        db.Clientes.modificar(self.dni.get(), self.nombre.get(), self.apellido.get())
         self.close()
 
     def close(self):
