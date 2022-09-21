@@ -3,6 +3,7 @@ from tkinter import *
 from tkinter import ttk
 import database as db
 from tkinter.messagebox import askokcancel, WARNING
+import helpers
 
 
 class CenterWidgetMixin:
@@ -25,6 +26,7 @@ class CreateClientWindow(Toplevel, CenterWidgetMixin):
         # Obligar al usuario a interactuar con la subventana
         self.transient(parent)
         self.grab_set()
+
     def build(self):
         # Top frame
         frame = Frame(self)
@@ -54,8 +56,19 @@ class CreateClientWindow(Toplevel, CenterWidgetMixin):
         Button(frame, text="Cancelar", command=self.close).grid(row=0,column=1)
 
 
+        # Create button activation
+        self.validaciones = [0, 0, 0] # False, False, False
+        self.crear = crear
+        self.dni = dni
+        self.nombre = nombre
+        self.apellido = apellido
+
+
     def create_client(self):
-        pass
+        self.master.treeview.insert(
+        parent='', index='end', iid=self.dni.get(), values=(self.dni.get(), self.nombre.get(),
+        self.apellido.get()))
+        self.close()
     def close(self):
         self.destroy()
         self.update()
@@ -63,9 +76,14 @@ class CreateClientWindow(Toplevel, CenterWidgetMixin):
 
     def validate(self, event, index):
         valor = event.widget.get()
-        # Validar como dni si es el primer campo o textual para los otrosdos
+        # Validar el dni si es el primer campo o textual para los otrosdos
         valido = helpers.dni_valido(valor, db.Clientes.lista) if index == 0\
-            else (valor.isalpha() and len(valor) >= 2 and len(valor) <= event.widget.configure({"bg": "Green" if valido else "Red"})
+        else (valor.isalpha() and len(valor) >= 2 and len(valor) <=
+        30)
+        event.widget.configure({"bg": "Green" if valido else "Red"})
+        # Cambiar estado del botón en base a las validaciones self.validaciones[index] = valido
+        self.crear.config(state=NORMAL if self.validaciones == [1, 1, 1]
+                                else DISABLED)
 
 
 class MainWindow(Tk, CenterWidgetMixin):
@@ -99,11 +117,12 @@ class MainWindow(Tk, CenterWidgetMixin):
         treeview.heading("Nombre", text="Nombre", anchor=CENTER)
         treeview.heading("Apellido", text="Apellido", anchor=CENTER)
         # Pack
-        treeview.pack()
 
 
         for cliente in db.Clientes.lista:
             treeview.insert(parent='', index='end', iid=cliente.dni, values=(cliente.dni, cliente.nombre, cliente.apellido))
+
+        treeview.pack()
 
         frame = Frame(self)
         frame.pack(pady=20)
