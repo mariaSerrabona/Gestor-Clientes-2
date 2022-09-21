@@ -86,6 +86,71 @@ class CreateClientWindow(Toplevel, CenterWidgetMixin):
                                 else DISABLED)
 
 
+class EditClientWindow(Toplevel, CenterWidgetMixin):
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.title('Actualizar cliente')
+        self.build()
+        self.center()
+        # Obligar al usuario a interactuar con la subventana self.transient(parent)
+        self.grab_set()
+
+
+    def build(self):
+        # Top frame
+        frame = Frame(self)
+        frame.pack(padx=20, pady=10)
+        # Labels
+        Label(frame, text="DNI (no editable)").grid(row=0, column=0)
+        Label(frame, text="Nombre (2 a 30 chars)").grid(row=0, column=1)
+        Label(frame, text="Apellido (2 a 30 chars)").grid(row=0, column=2)
+        # Entries
+        dni = Entry(frame)
+        dni.grid(row=1, column=0)
+        nombre = Entry(frame)
+        nombre.grid(row=1, column=1)
+        nombre.bind("<KeyRelease>", lambda ev: self.validate(ev, 0)) apellido = Entry(frame)
+        apellido.grid(row=1, column=2)
+        apellido.bind("<KeyRelease>", lambda ev: self.validate(ev, 1))
+                # Set entries initial values
+        cliente = self.master.treeview.focus()
+        campos = self.master.treeview.item(cliente, 'values') dni.insert(0, campos[0])
+        dni.config(state=DISABLED)
+        nombre.insert(0, campos[1])
+        apellido.insert(0, campos[2])
+        # Bottom frame
+        frame = Frame(self)
+        frame.pack(pady=10)
+        # Buttons
+        actualizar = Button(frame, text="Actualizar", command=self.update_client)
+        actualizar.grid(row=0, column=0)
+        Button(frame, text="Cancelar", command=self.close).grid(row=0, column=1)
+        # Update button activation
+        self.validaciones = [1, 1]  # True, True
+        # Class exports
+        self.actualizar = actualizar
+        self.dni = dni
+        self.nombre = nombre
+        self.apellido = apellido
+
+    def validate(self, event, index):
+        valor = event.widget.get()
+        valido = (valor.isalpha() and len(valor) >= 2 and len(valor) <=30)
+        event.widget.configure({"bg": "Green" if self.valido else "Red"})
+        # Cambiar estado del botón en
+        self.validaciones[index] = valido
+        self.actualizar.config(state=NORMAL if self.validaciones ==[1, 1] else DISABLED)
+
+    def update_client(self):
+        cliente = self.master.treeview.focus()
+        # Sobreescribimos los datos de la fila seleccionada self.master.treeview.item(
+        cliente, values=(self.dni.get(), self.nombre.get(), self.apellido.get()))
+        self.close()
+
+    def close(self):
+        self.destroy()
+        self.update()
+
 class MainWindow(Tk, CenterWidgetMixin):
     def __init__(self):
         super().__init__()
