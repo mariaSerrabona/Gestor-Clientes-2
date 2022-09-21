@@ -39,13 +39,13 @@ class CreateClientWindow(Toplevel, CenterWidgetMixin):
         # Entries and validations
         dni = Entry(frame)
         dni.grid(row=1, column=0)
-        dni.bind("<KeyRelease>", lambda ev: self.validate(ev, 0))
+        dni.bind("<KeyRelease>", lambda event: self.validate(event, 0))
         nombre = Entry(frame)
         nombre.grid(row=1, column=1)
-        nombre.bind("<KeyRelease>", lambda ev: self.validate(ev, 1))
+        nombre.bind("<KeyRelease>", lambda event: self.validate(event, 1))
         apellido = Entry(frame)
         apellido.grid(row=1, column=2)
-        apellido.bind("<KeyRelease>", lambda ev: self.validate(ev, 2))
+        apellido.bind("<KeyRelease>", lambda event: self.validate(event, 2))
         # Bottom frame
         frame = Frame(self)
         frame.pack(pady=10)
@@ -81,8 +81,7 @@ class CreateClientWindow(Toplevel, CenterWidgetMixin):
         valor = event.widget.get()
         # Validar el dni si es el primer campo o textual para los otrosdos
         valido = helpers.dni_valido(valor, db.Clientes.lista) if index == 0\
-        else (valor.isalpha() and len(valor) >= 2 and len(valor) <=
-        30)
+            else (valor.isalpha() and len(valor) >= 2 and len(valor) <=30)
         event.widget.configure({"bg": "Green" if valido else "Red"})
         # Cambiar estado del botón en base a las validaciones self.validaciones[index] = valido
         self.crear.config(state=NORMAL if self.validaciones == [1, 1, 1]
@@ -107,6 +106,7 @@ class EditClientWindow(Toplevel, CenterWidgetMixin):
         Label(frame, text="DNI (no editable)").grid(row=0, column=0)
         Label(frame, text="Nombre (2 a 30 chars)").grid(row=0, column=1)
         Label(frame, text="Apellido (2 a 30 chars)").grid(row=0, column=2)
+
         # Entries
         dni = Entry(frame)
         dni.grid(row=1, column=0)
@@ -116,6 +116,7 @@ class EditClientWindow(Toplevel, CenterWidgetMixin):
         apellido = Entry(frame)
         apellido.grid(row=1, column=2)
         apellido.bind("<KeyRelease>", lambda ev: self.validate(ev, 1))
+
                 # Set entries initial values
         cliente = self.master.treeview.focus()
         campos = self.master.treeview.item(cliente, 'values')
@@ -123,13 +124,16 @@ class EditClientWindow(Toplevel, CenterWidgetMixin):
         dni.config(state=DISABLED)
         nombre.insert(0, campos[1])
         apellido.insert(0, campos[2])
+
         # Bottom frame
         frame = Frame(self)
         frame.pack(pady=10)
+
         # Buttons
         actualizar = Button(frame, text="Actualizar", command=self.update_client)
         actualizar.grid(row=0, column=0)
         Button(frame, text="Cancelar", command=self.close).grid(row=0, column=1)
+
         # Update button activation
         self.validaciones = [1, 1]  # True, True
         # Class exports
@@ -198,10 +202,11 @@ class MainWindow(Tk, CenterWidgetMixin):
         frame = Frame(self)
         frame.pack(pady=20)
         # Buttons
-        Button(frame, text="Modificar", command=None).grid(row=1, column=1)
+        Button(frame, text="Modificar", command=self.create_edit_window).grid(row=1, column=1)
         Button(frame, text="Borrar", command=self.delete).grid(row=1, column=2)
         Button(frame, text="Crear", command=self.create_client_window).grid(row=1, column=0)
 
+        self.treeview = treeview
 
     def delete(self):
         cliente = self.treeview.focus()
@@ -219,6 +224,9 @@ class MainWindow(Tk, CenterWidgetMixin):
 
     def create_client_window(self):
         CreateClientWindow(self)
+
+    def create_edit_window(self):
+        EditClientWindow(self)
 
 
 
